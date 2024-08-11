@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 2px;
+  border-radius: 8px; /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #f5a800;
+   /* Set the color of the thumb */
+  /* Set the border radius of the thumb */
+}
+
+/* Styles for the track (the area in which the thumb moves) */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Set the color of the track */
+}
+
+/* You can also style the corners and the buttons, if needed */
+::-webkit-scrollbar-corner {
+  background-color: #f1f1f1; /* Set the color of the corners */
+}
+
+::-webkit-scrollbar-button {
+  display: none; /* Hide the scrollbar buttons */
+}
