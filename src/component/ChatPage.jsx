@@ -15,7 +15,6 @@ const EXPIRATION_TIME = 2 * 60 * 60 * 1000;
 
 function ChatPage() {
   const [humanquestion, setHumanquestion] = useState("");
-  const [trackLive,setTrackLive] = useState(true)
   const [messageHistory, setMessageHistory] = useState([{}]);
   const [airesponse, setAiresponse] = useState("");
   const [preloading, setPreloading] = useState(false);
@@ -82,7 +81,7 @@ function ChatPage() {
     if (emptyDivRef.current) {
       emptyDivRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [airesponse, messageHistory]);
+  }, [airesponse, messageHistory,liveMessageComponentStatus,combinedStreamedAiMessages]);
 
   useEffect(() => {
     const storedId = localStorage.getItem("session_id");
@@ -114,17 +113,7 @@ function ChatPage() {
   }, [session_id]);
 
 
-  useEffect(()=>{
-    async function fetch_chat_history() {
-      await axios
-        .get(
-          `https://workmate-banking-api.onrender.com/sql_chain/chats/${session_id}`
-        )
-        .then((res) => setMessageHistory(res.data));
-      console.log("hello");
-    }
-    fetch_chat_history();
-  },[trackLive])
+
 
   useEffect(() => {
     sqlQueryRef.current = sqlQuery;
@@ -330,8 +319,8 @@ function ChatPage() {
             column_types: columnTypeRef.current,
           };
           console.log(Aimessage, "op ai");
-          //setMessageHistory((prev) => [...prev, Aimessage]);
-          setTrackLive(!trackLive)
+          setMessageHistory((prev) => [...prev, Aimessage]);
+          
           setLiveMessageComponentStatus(false);
           setCombinedStreamedAiMessages("");
           setCombinedAttemptMessage("");
