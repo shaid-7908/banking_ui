@@ -25,8 +25,8 @@ function Livemessagecomponent() {
           {combinedAttemptMessage}
         </Markdown>
       </div>
-      <div className="h-[30vh] overflow-y-scroll w-[75vw] overflow-x-scroll rounded-md border-[1px] ">
-        {(!columns2 || columns2.length === 0 || !sqlresult || sqlresult.length === 0) ?(<ClipLoader size={14}/>): ( <table className="w-full border-[1px] text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
+      <div className="h-[30vh] overflow-y-scroll w-[75vw] overflow-x-scroll flex justify-center items-center rounded-md border-[1px] ">
+        {(!columns2 || columns2.length === 0 || !sqlresult || sqlresult.length === 0) ?(<ClipLoader size={35}/>): ( <table className="w-full border-[1px] text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                     {columns2?.map((column, index) => (
