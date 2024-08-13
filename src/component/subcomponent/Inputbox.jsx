@@ -205,7 +205,7 @@ function Inputbox() {
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-           
+            fetchStream()
           }
         }}
       />

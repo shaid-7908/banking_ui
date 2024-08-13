@@ -21,7 +21,7 @@ function AichatreplyComponent({ chatdata }) {
     console.log(`Render count: ${renderCount.current}`);
   }, [chatdata]);
 
-  const { message, rows, columns, sql_query, column_types } = chatdata;
+  const { message, rows, columns, query, column_types } = chatdata;
   const [showsql, setShowsql] = useState(false);
   const [dataComponentValue, setDataComponentValue] = useState("data");
 
@@ -54,14 +54,14 @@ function AichatreplyComponent({ chatdata }) {
 
   const handleCopy = useCallback(() => {
     navigator.clipboard
-      .writeText(sql_query)
+      .writeText(query)
       .then(() => {
         alert("SQL query copied to clipboard!");
       })
       .catch((err) => {
         console.error("Failed to copy the text: ", err);
       });
-  }, [sql_query]);
+  }, [query]);
 
   return (
     <div
@@ -120,7 +120,7 @@ function AichatreplyComponent({ chatdata }) {
             </button>
             <pre>
               <code className="language-sql whitespace-pre-wrap">
-                {sql_query}
+                {query}
               </code>
             </pre>
           </div>
