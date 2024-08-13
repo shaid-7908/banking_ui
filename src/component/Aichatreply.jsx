@@ -1,59 +1,58 @@
-//import React from 'react'
-import { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { FaRegCopy, FaTable } from "react-icons/fa";
 import { IoBarChartOutline } from "react-icons/io5";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import axios from "axios";
 import ChartComponent from "./Chartcomponent";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
-function Aichatreply({ chatdata }) {
-  console.log(chatdata,'chat data in Ai component')
+// Name the component explicitly for Fast Refresh
+function AichatreplyComponent({ chatdata }) {
+  const renderCount = useRef(0);
+
+  useEffect(() => {
+    renderCount.current += 1;
+    console.log(`Render count: ${renderCount.current}`);
+  }, [chatdata]);
+
   const { message, rows, columns, sql_query, column_types } = chatdata;
-  const [ showsql, setShowsql ] = useState(false);
-  // const [results, setResults] = useState([]);
-  // const [columns, setColumns] = useState([]);
+  const [showsql, setShowsql] = useState(false);
   const [dataComponentValue, setDataComponentValue] = useState("data");
-  const [columns1, setColumns1] = useState(null);
-  const [validColumnPairs, setValidColumnPairs] = useState(null);
-  // const cacheKey = `sql_query_${sql_query}`;
- 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const cachedData = localStorage.getItem(cacheKey);
 
-  //     if (cachedData) {
-  //       const parsedData = JSON.parse(cachedData);
-  //       setResults(parsedData.results);
-  //       setColumns(Object.keys(parsedData.results[0]));
-  //       setColumns1(parsedData.columns);
-  //       setValidColumnPairs(parsedData.valid_column_pairs);
-  //     } else {
-  //       try {
-  //         const result = await axios.post(
-  //           "http://127.0.0.1:8000/sql_chain/mysql_v1/sqlresult",
-  //           { sql_query }
-  //         );
-  //         const fetchedData = result.data;
-  //         localStorage.setItem(cacheKey, JSON.stringify(fetchedData));
-  //         setResults(fetchedData.results);
-  //         setColumns(Object.keys(fetchedData.results[0]));
-  //         setColumns1(fetchedData.columns);
-  //         setValidColumnPairs(fetchedData.valid_column_pairs);
-  //       } catch (e) {
-  //         console.log(e);
-  //       }
-  //     }
-  //   };
+  const renderers = useMemo(
+    () => ({
+      table: ({ ...props }) => (
+        <table
+          className="w-[50%] border-[1px] text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400"
+          {...props}
+        />
+      ),
+      thead: ({ ...props }) => (
+        <thead
+          className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+          {...props}
+        />
+      ),
+      tr: ({ ...props }) => (
+        <tr
+          className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b rounded-md dark:border-gray-700"
+          {...props}
+        />
+      ),
+      td: ({ ...props }) => <td className="px-6 py-4" {...props} />,
+      th: ({ ...props }) => <th className="px-6 py-4" {...props} />,
+      p: ({ ...props }) => <p className="w-[60%]" {...props} />,
+    }),
+    []
+  );
 
-  //   fetchData();
-  // }, [sql_query, cacheKey]);
-
-  
-
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     navigator.clipboard
       .writeText(sql_query)
       .then(() => {
@@ -62,37 +61,14 @@ function Aichatreply({ chatdata }) {
       .catch((err) => {
         console.error("Failed to copy the text: ", err);
       });
-  };
-
-  const renderers = {
-    table: ({  ...props }) => (
-      <table
-        className="w-[50%] border-[1px] text-xs text-left rtl:text-right text-gray-500 dark:text-gray-400"
-        {...props}
-      />
-    ),
-    thead: ({ ...props }) => (
-      <thead
-        className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-        {...props}
-      />
-    ),
-    tr: ({  ...props }) => (
-      <tr
-        className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b rounded-md dark:border-gray-700"
-        {...props}
-      />
-    ),
-    td: ({  ...props }) => <td className="px-6 py-4" {...props} />,
-    th: ({  ...props }) => <th className="px-6 py-4" {...props} />,
-    p: ({ ...props }) => <p className="w-[60%]" {...props} />,
-  };
+  }, [sql_query]);
 
   return (
-    <div 
+    <div
       className="w-full border-[1px] p-2 rounded-md mb-4 bg-white"
       style={{ boxShadow: "0 5px 5px rgba(0, 0, 0, 0.05)" }}
     >
+      {/* <p>This component has rendered {renderCount.current} times.</p> */}
       <div className="flex">
         <div
           className={`mx-2 flex items-center my-2 px-4 py-2 rounded-lg ${
@@ -122,7 +98,6 @@ function Aichatreply({ chatdata }) {
         </div>
       </div>
 
-      {/* SQL table*/}
       {dataComponentValue === "data" ? (
         <div>
           <div
@@ -180,7 +155,7 @@ function Aichatreply({ chatdata }) {
           </div>
         </div>
       ) : (
-        <div className="w-[80%]  my-4">
+        <div className="w-[80%] my-4">
           <ChartComponent
             rows={rows}
             columns={columns}
@@ -188,7 +163,6 @@ function Aichatreply({ chatdata }) {
           />
         </div>
       )}
-      {/*Actual message */}
       <div className="text-[14px] w-[75vw] overflow-x-scroll">
         {message && (
           <Markdown
@@ -200,5 +174,9 @@ function Aichatreply({ chatdata }) {
     </div>
   );
 }
+
+// Export the memoized version of the component with a name
+const Aichatreply = React.memo(AichatreplyComponent);
+Aichatreply.displayName = "Aichatreply";
 
 export default Aichatreply;

@@ -1,7 +1,8 @@
 //import React from 'react'
 import Navbar from '../component/Navbar'
 import Sidebar from '../component/Sidebar'
-import ChatPage from '../component/ChatPage'
+//import ChatPage from '../component/ChatPage'
+import ChatpageOptimized from '../component/ChatpageOptimized';
 
 function Chat() {
   return (
@@ -9,7 +10,7 @@ function Chat() {
     <Navbar />
       <div className='flex'>
         <Sidebar />
-        <ChatPage />
+        <ChatpageOptimized/>
       </div>
     </>
   );
