@@ -19,7 +19,7 @@ function Livemessagecomponent() {
       className="w-full border-[1px] p-2 rounded-md mb-4 bg-white"
       style={{ boxShadow: "0 5px 5px rgba(0, 0, 0, 0.05)" }}
     >
-      h
+      
       <div className="bg-slate-800 text-white overflow-y-scroll w-[75vw]">
         <Markdown rehypePlugins={[remarkGfm]}>
           {combinedAttemptMessage}

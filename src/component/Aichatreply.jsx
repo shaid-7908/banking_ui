@@ -11,6 +11,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import ChartComponent from "./Chartcomponent";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import PaginatedTable from "./subcomponent/PaginatedTable";
 
 // Name the component explicitly for Fast Refresh
 function AichatreplyComponent({ chatdata }) {
@@ -21,7 +22,7 @@ function AichatreplyComponent({ chatdata }) {
     console.log(`Render count: ${renderCount.current}`);
   }, [chatdata]);
 
-  const { message, rows, columns, query, column_types } = chatdata;
+  const { message, rows, columns, query, column_types ,valid_column_pairs } = chatdata;
   const [showsql, setShowsql] = useState(false);
   const [dataComponentValue, setDataComponentValue] = useState("data");
 
@@ -83,7 +84,8 @@ function AichatreplyComponent({ chatdata }) {
           </span>
           <span className=" mx-[4px]">Data</span>
         </div>
-        <div
+        {valid_column_pairs?.length != 0 ?
+        (<div
           className={`mx-2 flex items-center my-2 px-4 py-2 rounded-lg ${
             dataComponentValue === "chart"
               ? "bg-black text-white"
@@ -95,7 +97,8 @@ function AichatreplyComponent({ chatdata }) {
             <IoBarChartOutline />
           </span>
           <span>Chart</span>
-        </div>
+        </div>):<span></span>
+          }
       </div>
 
       {dataComponentValue === "data" ? (
@@ -119,40 +122,10 @@ function AichatreplyComponent({ chatdata }) {
               <FaRegCopy />
             </button>
             <pre>
-              <code className="language-sql whitespace-pre-wrap">
-                {query}
-              </code>
+              <code className="language-sql whitespace-pre-wrap">{query}</code>
             </pre>
           </div>
-          <div className="h-[30vh] overflow-y-scroll w-[75vw] overflow-x-scroll rounded-md border-[1px] ">
-            <table className="w-full border-[1px] text-sm text-left rtl:text-right text-gray-700 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                  {columns.map((column, index) => (
-                    <th className="px-6 py-4" key={index}>
-                      {column.replace("_", " ")}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, rowIndex) => (
-                  <tr
-                    key={rowIndex}
-                    className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700"
-                  >
-                    {columns.map((column, colIndex) => (
-                      <td key={colIndex} className="px-6 py-4">
-                        {typeof row[column] === "number"
-                          ? row[column].toFixed(2)
-                          : row[column]}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <PaginatedTable columns={columns} rows={rows}/>
         </div>
       ) : (
         <div className="w-[80%] my-4">
@@ -160,6 +133,7 @@ function AichatreplyComponent({ chatdata }) {
             rows={rows}
             columns={columns}
             column_types={column_types}
+            valid_column_pairs={valid_column_pairs}
           />
         </div>
       )}

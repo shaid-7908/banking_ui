@@ -17,7 +17,7 @@ const EXPIRATION_TIME = 2 * 60 * 60 * 1000;
 
 function ChatpageOptimized() {
   const renderCount = useRef(0); // Initialize render count
-
+ const scrollRef = useRef(null);
   renderCount.current += 1;
   const [humanQuestion, setHumanQuestion] = useState("");
   //   const [messageHistory, setMessageHistory] = useState([]);
@@ -48,7 +48,7 @@ function ChatpageOptimized() {
   const columnRef = useRef();
   const sqlresultRef = useRef();
   const columnTypeRef = useRef();
-
+  console.log(session_id,'in-chat')
   useEffect(() => {
     combinedStreamedAiMessagesRef.current = combinedStreamedAiMessages;
     sqlQueryRef.current = sqlQuery;
@@ -63,11 +63,12 @@ function ChatpageOptimized() {
       columnTypeRef.current = null;
     };
   }, [combinedStreamedAiMessages, sqlQuery, columns2, sqlresult, columnTypes]);
-
+  useEffect(() => {
+    scrollRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [loading, liveMessageComponentStatus, chatReload, messageHistory]);
   useEffect(() => {
     const storedId = localStorage.getItem("session_id");
     const storedTimestamp = localStorage.getItem("session_timestamp");
-
     const isExpired =
       !storedTimestamp ||
       new Date().getTime() - storedTimestamp > EXPIRATION_TIME;
@@ -80,20 +81,25 @@ function ChatpageOptimized() {
     }
 
     dispatch(create_session(newId));
+  }, [dispatch]);
 
-    async function fetch_chat_history(id) {
-      try {
-        const response = await axios.get(
-          `https://workmate-banking-api.onrender.com/sql_chain/chats/${id}`
-        );
-        dispatch(setMessageHistory(response.data));
-        //setMessageHistory(response.data);
-      } catch (error) {
-        console.error("Failed to fetch chat history:", error);
-      }
+  // This useEffect fetches chat history once session_id is created
+  useEffect(() => {
+    if (session_id) {
+      const fetch_chat_history = async (id) => {
+        try {
+          const response = await axios.get(
+            `https://workmate-banking-api.onrender.com/sql_chain/chats/${id}`
+          );
+          dispatch(setMessageHistory(response.data));
+        } catch (error) {
+          console.error("Failed to fetch chat history:", error);
+        }
+      };
+
+      fetch_chat_history(session_id);
     }
-    fetch_chat_history(newId);
-  }, [dispatch,chatReload]);
+  }, [dispatch, session_id, chatReload]);
 
   const renderers = useMemo(
     () => ({
@@ -359,6 +365,7 @@ function ChatpageOptimized() {
             <span></span>
           )} */}
         </div>
+        <div ref={scrollRef}></div>
       </div>
 
       <div className="w-full sticky p-4 bottom-0 flex justify-center">
